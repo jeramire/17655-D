@@ -157,7 +157,7 @@ public class PressureFilter extends FilterFrameworkWildPoint
 							wildpointstreams[wildpointstreams_length++] = databyte;
 						}
 					}
-				} 
+				}
 				else
 				{
 					databyte = ReadFilterInputPort();

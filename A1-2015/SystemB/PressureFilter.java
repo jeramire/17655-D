@@ -139,6 +139,7 @@ public class PressureFilter extends FilterFrameworkWildPoint
 					}
 
 					map.put( "current", midvalue );
+					midvalue = Math.round (midvalue * 100000.0) / 100000.0;   //formatting double to show only 5 decimal places
 
 					measurement = Double.doubleToLongBits(midvalue);
 					for(i = 0; i < MeasurementLength; i++) {
@@ -150,6 +151,7 @@ public class PressureFilter extends FilterFrameworkWildPoint
 
 					if(wildpoint)
 					{
+						midvaluewildpoint = Math.round (midvaluewildpoint * 100000.0) / 100000.0;   //formatting double to show only 5 decimal places
 						wildpointmeasurement = Double.doubleToLongBits(midvaluewildpoint);
 						//wildpointstreams_length = streamindex;
 					    for(i = 0; i < MeasurementLength; i++) {

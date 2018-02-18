@@ -87,6 +87,7 @@ public class FahrenheitToCelsiusFilter extends FilterFramework
 					} // if
 
 					midvalue = (Double.longBitsToDouble(measurement) - 32) * 5.0 / 9.0;
+					midvalue = Math.round (midvalue * 100000.0) / 100000.0;   //formatting double to show only 5 decimal places
 					measurement = Double.doubleToLongBits(midvalue);
 					for(i = 0; i < MeasurementLength; i++) {
 						databyte = (byte) ((measurement >> ((7 - i) * 8)) & 0xff);

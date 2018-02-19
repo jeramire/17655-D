@@ -1,38 +1,10 @@
-/******************************************************************************************************************
-* File:BytesToMeasurementsTransformer.java
-* Course: 17655
-* Project: Assignment 1
-* Copyright: Copyright (c) 2003 Carnegie Mellon University
-* Versions:
-*	1.0 November 2008 - Initial rewrite of original assignment 1 (ajl).
-*
-* Description:
-*
-* This class serves as a template for creating filters. The details of threading, filter connections, input, and output
-* are contained in the FilterFramework super class. In order to use this template the program should rename the class.
-* The template includes the run() method which is executed when the filter is started.
-* The run() method is the guts of the filter and is where the programmer should put their filter specific code.
-* In the template there is a main read-write loop for reading from the input port of the filter and writing to the
-* output port of the filter. This template assumes that the filter is a "normal" that it both reads and writes data.
-* That is both the input and output ports are used - its input port is connected to a pipe from an up-stream filter and
-* its output port is connected to a pipe to a down-stream filter. In cases where the filter is a source or sink, you
-* should use the SourceFileReader.java or SinkMeasurementPrinter.java as a starting point for creating source or sink
-* filters.
-*
-* Parameters: 		None
-*
-* Internal Methods:
-*
-*	public void run() - this method must be overridden by this class.
-*
-******************************************************************************************************************/
 import java.io.*;
-import java.util.*;						// This class is used to interpret time words
-import java.text.SimpleDateFormat;		// This class is used to format and write time in a string format.
+import java.util.*;                        // This class is used to interpret time words
+import java.text.SimpleDateFormat;        // This class is used to format and write time in a string format.
 
 public class BytesToMeasurementsTransformer extends FilterFramework {
-	int MeasurementLength = 8;		// This is the length of all measurements (including time) in bytes
-	int IdLength = 4;				// This is the length of IDs in the byte stream
+    int MeasurementLength = 8;        // This is the length of all measurements (including time) in bytes
+    int IdLength = 4;                // This is the length of IDs in the byte stream
 
     public void run() {
         /************************************************************************************
@@ -44,18 +16,17 @@ public class BytesToMeasurementsTransformer extends FilterFramework {
         Calendar TimeStamp = Calendar.getInstance();
         SimpleDateFormat TimeStampFormat = new SimpleDateFormat("yyyy MM dd::hh:mm:ss:SSS");
 
-        byte databyte = 0;				// This is the data byte read from the stream
-        int bytesread = 0;				// This is the number of bytes read from the stream
-
-        long measurement;				// This is the word used to store all measurements - conversions are illustrated.
-        int id;							// This is the measurement id
-        int i;							// This is a loop counter
+        byte databyte = 0;                // This is the data byte read from the stream
+        int bytesread = 0;                // This is the number of bytes read from the stream
+        long measurement;                // This is the word used to store all measurements - conversions are illustrated.
+        int id;                            // This is the measurement id
+        int i;                            // This is a loop counter
 
         /*************************************************************
          *	First we announce to the world that we are alive...
          **************************************************************/
 
-        System.out.print( "\n" + this.getName() + "::BytesToMeasurementsTransformer ");
+        System.out.print("\n" + this.getName() + "::BytesToMeasurementsTransformer ");
         Measurement m = new Measurement();
         while (true) {
             try {
@@ -66,14 +37,14 @@ public class BytesToMeasurementsTransformer extends FilterFramework {
 
                 id = 0;
 
-                for (i=0; i<this.IdLength; i++ ) {
-                    databyte = ReadFilterInputPort();	// This is where we read the byte from the stream...
-                    id = id | (databyte & 0xFF);		// We append the byte on to ID...
-                    if (i != this.IdLength-1) {			// If this is not the last byte, then slide the
-                                                        // previously appended byte to the left by one byte
-                        id = id << 8;					// to make room for the next byte we append to the ID
+                for (i = 0; i < this.IdLength; i++) {
+                    databyte = ReadFilterInputPort();    // This is where we read the byte from the stream...
+                    id = id | (databyte & 0xFF);        // We append the byte on to ID...
+                    // If this is not the last byte, then slide the previously appended byte to the left by one byte
+                    if (i != this.IdLength - 1) {
+                        id = id << 8;                    // to make room for the next byte we append to the ID
                     }
-                    bytesread++;						// Increment the byte count
+                    bytesread++;                        // Increment the byte count
                 }
 
                 /****************************************************************************
@@ -90,14 +61,14 @@ public class BytesToMeasurementsTransformer extends FilterFramework {
 
                 measurement = 0;
 
-                for (i=0; i<this.MeasurementLength; i++ ) {
+                for (i = 0; i < this.MeasurementLength; i++) {
                     databyte = ReadFilterInputPort();
-                    measurement = measurement | (databyte & 0xFF);	// We append the byte on to measurement...
-                    if (i != this.MeasurementLength-1) {			// If this is not the last byte, then slide the
-                    											    // previously appended byte to the left by one byte
-                        measurement = measurement << 8;				// to make room for the next byte we append to the
+                    measurement = measurement | (databyte & 0xFF);    // We append the byte on to measurement...
+                    // If this is not the last byte, then slide the previously appended byte to the left by one byte
+                    if (i != this.MeasurementLength - 1) {
+                        measurement = measurement << 8;                // to make room for the next byte we append to the
                     }
-                    bytesread++;									// Increment the byte count
+                    bytesread++;                                    // Increment the byte count
                 }
 
                 /****************************************************************************
@@ -111,7 +82,7 @@ public class BytesToMeasurementsTransformer extends FilterFramework {
                  // illustrated below.
                  ****************************************************************************/
 
-                if ( id == 0 ) {
+                if (id == 0) {
                     TimeStamp.setTimeInMillis(measurement);
                     m.timestamp = TimeStamp.getTime();
                 } else {
@@ -150,10 +121,9 @@ public class BytesToMeasurementsTransformer extends FilterFramework {
              *	stream (duh). At this point, the filter ports are closed and a message is
              *	written letting the user know what is going on.
              ********************************************************************************/
-
             catch (EndOfStreamException e) {
                 ClosePorts();
-                System.out.print( "\n" + this.getName() + "::Sink Exiting; bytes read: " + bytesread );
+                System.out.print("\n" + this.getName() + "::Sink Exiting; bytes read: " + bytesread);
                 break;
             }
         }
